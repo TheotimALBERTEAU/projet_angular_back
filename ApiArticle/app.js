@@ -1,17 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose'); // ⬅️ Ajout de Mongoose
+const mongoose = require('mongoose');
+const dotenv = require('dotenv'); // ⬅️ 1. Importation de dotenv
+
+// 2. Charger les variables d'environnement depuis le fichier .env
+dotenv.config();
 
 // Initialiser l'application back
 const app = express();
 
 // ------------------------------------------------------------------ //
-// ⚠️ CONNEXION MONGODB ATLAS (MULTIPLE DATABASES)
+// ✅ CONNEXION MONGODB ATLAS (UTILISATION DE VARIABLE D'ENVIRONNEMENT)
 // ------------------------------------------------------------------ //
 
-// L'URI du cluster (sans spécifier de base de données initiale, car nous allons en connecter plusieurs)
-// ⚠️ ATTENTION : REMPLACEZ <MOT_DE_PASSE_DE_THEOTIM> par le mot de passe réel.
-const clusterURI = "mongodb+srv://Theotim:PETOqgtYLS6siDvD@dbarticles.ezalmun.mongodb.net/";
+// Récupération de l'URI complète depuis process.env
+const clusterURI = process.env.MONGO_CLUSTER_URI; // ⬅️ 3. Utilisation de la variable d'environnement
+
+// Vérification de sécurité
+if (!clusterURI) {
+    console.error('❌ ERREUR: MONGO_CLUSTER_URI non défini dans le fichier .env.');
+    process.exit(1); // Arrêter l'application si l'URI est manquante
+}
+
 const connectionOptions = {
     retryWrites: true,
     w: 'majority',
