@@ -59,41 +59,31 @@ router.get("/:id", async (request, response) => {
 /**
  * Route POST : Pour ajouter ou modifier un article (CRUD: Create/Update)
  */
-router.post('/articles/save', async (req, res) => {
+router.post("/save", async (request, response) => {
     // Récupérer l'article qui est envoyé en JSON
-    const articleJSON = req.body; // Utilisez 'req' et 'res' comme variables Express standard
+    const articleJSON = request.body;
 
     try {
-        // Vérifier si l'ID MongoDB (_id ou id) est fourni pour l'UPDATE
-        // Nous vérifions à la fois l'id virtuel et le _id interne
-        const articleId = articleJSON._id || articleJSON.id;
-
-        if (articleId) {
+        // Vérifier si l'ID MongoDB (_id) est fourni pour l'UPDATE
+        if (articleJSON._id) {
             // ------------------ UPDATE ------------------
             // Article.findByIdAndUpdate trouve et modifie l'article en une seule requête.
             const updatedArticle = await Article.findByIdAndUpdate(
-                articleId,
+                articleJSON._id,
                 {
                     title: articleJSON.title,
                     desc: articleJSON.desc,
                     author: articleJSON.author,
-                    imgPath: articleJSON.imgPath
+                    imgPath: articleJSON.imgPath // Assurez-vous d'inclure imgPath si elle est modifiable
                 },
-                { new: true, runValidators: true } // new: true retourne le document mis à jour, runValidators pour appliquer les règles du schéma
+                { new: true } // { new: true } demande à Mongoose de retourner le document mis à jour
             );
 
             if (!updatedArticle) {
-                // Si l'ID ne correspond à aucun document
-                return res.status(404).json({
-                    message: "Impossible de trouver l'article pour modification."
-                });
+                return httpApiResponse(response, "721", `Impossible de trouver l'article pour modification`, null);
             }
 
-            // Mongoose utilise toJSON, donc l'objet renvoyé aura bien la propriété 'id'
-            return res.status(200).json({
-                message: "L'article a été modifié avec succès",
-                article: updatedArticle
-            });
+            return httpApiResponse(response, "200", `L'article a été modifié avec succès`, updatedArticle);
 
         } else {
             // ------------------ CREATE ------------------
@@ -101,26 +91,12 @@ router.post('/articles/save', async (req, res) => {
             const newArticle = new Article(articleJSON);
             const savedArticle = await newArticle.save(); // La méthode .save() insère dans MongoDB et génère un _id.
 
-            // Mongoose utilise toJSON, donc l'objet renvoyé aura bien la propriété 'id'
-            return res.status(201).json({
-                message: "Article créé avec succès !",
-                article: savedArticle
-            });
+            return httpApiResponse(response, "200", `Article crée avec succès !`, savedArticle);
         }
     } catch (error) {
         console.error("Erreur lors de la création/modification de l'article:", error);
-
-        // Gérer spécifiquement les erreurs de validation Mongoose
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({
-                message: "Erreur de validation : des champs requis sont manquants ou invalides.",
-                details: error.errors
-            });
-        }
-
-        return res.status(500).json({
-            message: "Erreur serveur lors de l'opération d'enregistrement"
-        });
+        // Vous pouvez ajouter une logique pour gérer les erreurs de validation (required fields)
+        return httpApiResponse(response, "500", `Erreur serveur lors de l'opération d'enregistrement`, null);
     }
 });
 
