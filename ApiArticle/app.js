@@ -69,6 +69,6 @@ const moviesRouter = require('./movies/movie-routes');
 app.use('/movies', moviesRouter);
 
 // Démarrer le serveur avec le port 3000
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log("Le serveur a démarré sur http://localhost:3000");
 });
