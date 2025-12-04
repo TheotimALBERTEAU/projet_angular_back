@@ -1,102 +1,129 @@
 const express = require('express');
 const router = express.Router();
 const { httpApiResponse } = require('../core/http-library');
-const { middlewareVerifyToken } = require('../core/middlewares');
-const { v4: uuidv4 } = require('uuid');
+// const { middlewareVerifyToken } = require('../core/middlewares'); // Maintenu si nécessaire
+// const { v4: uuidv4 } = require('uuid'); // Plus besoin de UUID pour l'ID, MongoDB le gère.
 
-let DB_Articles = [
-    { id: '1', title: 'Premier article', desc: 'Contenu du premier article', author: 'Isaac', imgPath: 'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-653001154-e1691965000531.jpg' },
-    { id: '2', title: 'Deuxième article', desc: 'Contenu du deuxième article', author: 'Sanchez', imgPath: 'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-653001154-e1691965000531.jpg' },
-    { id: '3', title: 'Troisième article', desc: 'Contenu du troisième article', author: 'Toto', imgPath: 'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-653001154-e1691965000531.jpg' }
-];
+// ------------------------------------------------------------------ //
+// ⚠️ IMPORT DU MODÈLE MONGOOSE
+// ------------------------------------------------------------------ //
+// Assurez-vous d'avoir créé un fichier Article.model.js et de l'importer ici.
+const Article = require('../models/Article.model');
+
 
 // ================================================================== //
-// GESTION ARTICLES
+// GESTION ARTICLES - OPÉRATIONS MONGOOSE
 // ================================================================== //
+
 /**
- * Route GET : Pour récupèrer tout les articles
+ * Route GET : Pour récupérer tous les articles
  */
 router.get("/", async (request, response) => {
-    // Récupèrer une liste/tableau d'article
-    const articles = DB_Articles;
+    try {
+        // Remplacer DB_Articles par Article.find()
+        const articles = await Article.find();
 
-    // Retourner les articles dans la réponse JSON
-    return httpApiResponse(response, "200", `La liste des articles a été récupérée avec succès !`, articles);
+        // Retourner les articles dans la réponse JSON
+        return httpApiResponse(response, "200", `La liste des articles a été récupérée avec succès !`, articles);
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération des articles:", error);
+        return httpApiResponse(response, "500", `Erreur serveur lors de la récupération des articles`, null);
+    }
 });
 
 /**
- * Route GET : Pour récupèrer un article
+ * Route GET : Pour récupérer un article
  */
 router.get("/:id", async (request, response) => {
-    // Récupérer l'id de l'url
+    // Récupérer l'id de l'url (Mongoose utilise _id par défaut pour la recherche)
     const idParam = request.params.id;
 
-    // Rechercher un article par son id
-    const foundArticle = DB_Articles.find(article => article.id === idParam);
+    try {
+        // Remplacer DB_Articles.find() par Article.findById()
+        const foundArticle = await Article.findById(idParam);
 
-    if (!foundArticle) {
-        return httpApiResponse(response, "721", `L'article n'existe pas`, null);
+        if (!foundArticle) {
+            return httpApiResponse(response, "721", `L'article n'existe pas`, null);
+        }
+
+        return httpApiResponse(response, "200", `L'article a été récupéré avec succès`, foundArticle);
+
+    } catch (error) {
+        // Cela peut capturer une erreur si l'ID n'est pas un ObjectId valide
+        console.error("Erreur lors de la recherche de l'article:", error);
+        return httpApiResponse(response, "721", `L'ID fourni n'est pas valide`, null);
     }
-
-    return httpApiResponse(response, "200", `L'article a été récupéré avec succès`, foundArticle);
-
 });
 
 /**
- * Route POST : Pour ajouter un article
+ * Route POST : Pour ajouter ou modifier un article (CRUD: Create/Update)
  */
 router.post("/save", async (request, response) => {
     // Récupérer l'article qui est envoyé en JSON
     const articleJSON = request.body;
 
-    let foundArticle = null;
+    try {
+        // Vérifier si l'ID MongoDB (_id) est fourni pour l'UPDATE
+        if (articleJSON._id) {
+            // ------------------ UPDATE ------------------
+            // Article.findByIdAndUpdate trouve et modifie l'article en une seule requête.
+            const updatedArticle = await Article.findByIdAndUpdate(
+                articleJSON._id,
+                {
+                    title: articleJSON.title,
+                    desc: articleJSON.desc,
+                    author: articleJSON.author,
+                    imgPath: articleJSON.imgPath // Assurez-vous d'inclure imgPath si elle est modifiable
+                },
+                { new: true } // { new: true } demande à Mongoose de retourner le document mis à jour
+            );
 
-    // Est-ce on a un id envoyer dans le json
-    if (articleJSON.id != undefined || articleJSON.id) {
-        // essayer de trouver un article existant
-        foundArticle = DB_Articles.find(article => article.id === articleJSON.id);
+            if (!updatedArticle) {
+                return httpApiResponse(response, "721", `Impossible de trouver l'article pour modification`, null);
+            }
+
+            return httpApiResponse(response, "200", `L'article a été modifié avec succès`, updatedArticle);
+
+        } else {
+            // ------------------ CREATE ------------------
+            // Créer un nouveau document Mongoose et le sauvegarder
+            const newArticle = new Article(articleJSON);
+            const savedArticle = await newArticle.save(); // La méthode .save() insère dans MongoDB et génère un _id.
+
+            return httpApiResponse(response, "200", `Article crée avec succès !`, savedArticle);
+        }
+    } catch (error) {
+        console.error("Erreur lors de la création/modification de l'article:", error);
+        // Vous pouvez ajouter une logique pour gérer les erreurs de validation (required fields)
+        return httpApiResponse(response, "500", `Erreur serveur lors de l'opération d'enregistrement`, null);
     }
-
-    // Si je trouve je modifie les nouvelles valeurs
-    if (foundArticle) {
-        foundArticle.title = articleJSON.title;
-        foundArticle.desc = articleJSON.desc;
-        foundArticle.author = articleJSON.author;
-
-        return httpApiResponse(response, "200", `L'article a été modifié avec succès`, articleJSON);
-    }
-
-    // Sinon par défaut je créer
-
-    // -- generer l'id
-    articleJSON.id = uuidv4();
-
-    DB_Articles.push(articleJSON);
-
-    return httpApiResponse(response, "200", `Article crée avec succès !`, articleJSON);
 });
 
 
 /**
- * Route POST : Pour ajouter supprimer un article
+ * Route DELETE : Pour supprimer un article (CRUD: Delete)
  */
-router.delete('/:id', (request, response) => {
+router.delete('/:id', async (request, response) => {
 
-    // Il faut l'id en entier
+    // Il faut l'id MongoDB (_id) en entier
     const id = request.params.id;
 
-    // trouver l'index
-    const foundArticleIndex = DB_Articles.findIndex(article => article.id === id);
+    try {
+        // Remplacer splice par findByIdAndDelete
+        const deletedArticle = await Article.findByIdAndDelete(id);
 
-    // si article trouve erreur
-    if (foundArticleIndex < 0) {
-        return httpApiResponse(response, "721", `Impossible de supprimer un article inexistant`, null);
+        // Si findByIdAndDelete ne trouve rien, il retourne null
+        if (!deletedArticle) {
+            return httpApiResponse(response, "721", `Impossible de supprimer un article inexistant (ID: ${id})`, null);
+        }
+
+        return httpApiResponse(response, "200", `Article ${id} supprimé avec succès`, null);
+
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'article:", error);
+        return httpApiResponse(response, "500", `Erreur serveur lors de la suppression`, null);
     }
-
-    // supprimer grace à l'index
-    DB_Articles.splice(foundArticleIndex, 1);
-
-    return httpApiResponse(response, "200", `Article ${id} supprimé avec succès`, null);
 });
 
 // Exporter le router

@@ -250,3 +250,87 @@
 2025-10-27T16:42:08.549Z info: Code : 200 - Message : La liste des articles a été récupérée avec succès !
 2025-10-27T16:48:15.733Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
 2025-10-27T16:48:15.734Z info: Code : 200 - Message : Vous êtes connecté(e)
+2025-12-04T10:20:46.408Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:48.917Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:51.476Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:51.706Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:51.929Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:52.156Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:56.439Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:20:56.440Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:20:56.457Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:20:58.935Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:20:58.937Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:20:58.943Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:01.484Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:01.485Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:01.490Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:01.725Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:01.727Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:01.734Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:01.949Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:01.951Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:01.955Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:02.169Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:02.170Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:02.175Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:06.462Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:06.463Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:06.469Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:08.954Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:08.955Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:08.960Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:11.498Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:11.499Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:11.504Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:11.746Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:11.748Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:11.752Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:11.971Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:11.974Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:11.978Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:12.179Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:12.180Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:12.184Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:21:16.475Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:16.476Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:18.977Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:18.978Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:21.510Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:21.511Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:21.764Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:21.765Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:21.985Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:21.986Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:21:22.192Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:21:22.193Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:23:49.000Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:23:59.008Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:23:59.009Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:31:10.778Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:31:11.940Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:31:12.102Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:31:18.417Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:31:20.800Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:31:20.801Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:31:21.943Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:31:21.944Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:31:22.115Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:31:22.115Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:31:28.425Z error: Erreur lors de la connexion: Operation `users.findOne()` buffering timed out after 10000ms
+2025-12-04T10:31:28.426Z info: Code : 500 - Message : Erreur serveur lors de la connexion
+2025-12-04T10:33:56.807Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:33:56.868Z info: Code : 768 - Message : Couple email/mot de passe incorrect
+2025-12-04T10:33:58.831Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:33:58.882Z info: Code : 768 - Message : Couple email/mot de passe incorrect
+2025-12-04T10:35:19.249Z info: The sended user request : {"email":"theotim.alberteau@supdevinci-edu.fr","password":"test"}
+2025-12-04T10:35:19.305Z info: Code : 200 - Message : Vous êtes connecté(e)
+2025-12-04T10:35:31.670Z info: Code : 500 - Message : Erreur serveur lors de la récupération des articles
+2025-12-04T10:39:04.620Z info: The sended user request : {"email":"toto@gmail.com","password":"12345"}
+2025-12-04T10:39:04.649Z info: Code : 200 - Message : Vous êtes connecté(e)
+2025-12-04T10:39:53.258Z info: Code : 200 - Message : Inscription effectuée avec succès
+2025-12-04T10:40:31.989Z info: The sended user request : {"email":"sunshouwu@outlook.com","password":"angular"}
+2025-12-04T10:40:32.025Z info: Code : 200 - Message : Vous êtes connecté(e)
+2025-12-04T10:40:44.793Z info: Code : 500 - Message : Erreur serveur lors de la récupération des articles
+2025-12-04T10:41:48.669Z info: Code : 500 - Message : Erreur serveur lors de la récupération des articles
+2025-12-04T10:42:27.690Z info: Code : 200 - Message : La liste des articles a été récupérée avec succès !
