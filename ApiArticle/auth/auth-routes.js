@@ -85,8 +85,9 @@ router.post("/signup", async (request, response) => {
         }
 
         // Erreur : Les champs inexistant
-        // J'ai inclus 'passwordConfirm' ici temporairement pour la vérification, mais il ne sera pas stocké.
-        const fields = ['email', 'password', 'pseudo', 'cityCode', 'city', 'phone', 'username']; // J'ajoute username car il est requis par le modèle
+        // 🎯 CHANGEMENT ICI : 'username' est retiré de la vérification front-end.
+        // Nous conservons 'pseudo' qui sera utilisé comme 'username' dans la BDD.
+        const fields = ['email', 'password', 'pseudo', 'cityCode', 'city', 'phone'];
         const fieldSuccess = fields.every(field => userRequest.hasOwnProperty(field));
         if (!fieldSuccess) {
             return httpApiResponse(response, "713", "Il manque un ou des champs requis", null);
@@ -102,8 +103,15 @@ router.post("/signup", async (request, response) => {
                 newUser[field] = userRequest[field];
             }
         });
+
         // 4. Remplacer le mot de passe en clair par le HASH
         newUser.password = hashedPassword;
+
+        // 🎯 AJOUT CRUCIAL : Si le modèle Mongoose nécessite 'username',
+        // on lui assigne la valeur de 'pseudo' pour satisfaire le schéma.
+        // Si vous avez corrigé votre modèle pour utiliser 'pseudo', cette ligne est optionnelle
+        // mais sécurise l'opération si le modèle User.model.js est resté sur 'username'.
+        newUser.username = userRequest.pseudo;
 
         // 5. Insérer dans la BDD
         const userToSave = new User(newUser);
