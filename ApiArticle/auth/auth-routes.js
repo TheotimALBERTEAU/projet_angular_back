@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { httpApiResponse } = require('../core/http-library');
 const { logger } = require('../core/logger');
-// const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-// ❌ Retrait de la ligne : const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // 🎯 Importation de bcrypt
 const { stringify } = require('uuid');
 
 // ------------------------------------------------------------------ //
@@ -15,6 +14,8 @@ const User = require('../models/User.model');
 
 // Le clé JWT
 const jwtSecretKey = "AZERTY";
+// Configuration pour le hachage
+const saltRounds = 10; // Niveau de complexité du hachage (standard)
 
 // Fonction utilitaire pour générer un mot de passe
 function generetePassword(length) {
@@ -30,7 +31,7 @@ function generetePassword(length) {
 }
 
 // ================================================================== //
-// ROUTES D'AUTHENTIFICATION (MODE INSEECUR - SANS HACHAGE)
+// ROUTES D'AUTHENTIFICATION (MODE SÉCURISÉ AVEC HACHAGE BCrypt)
 // ================================================================== //
 
 router.post("/login", async (request, response) => {
@@ -40,17 +41,18 @@ router.post("/login", async (request, response) => {
 
     try {
         // 1. Trouver l'utilisateur par email
-        const foundUser = await User.findOne({ email: userRequest.email });
+        // 🎯 Nous devons demander explicitement le champ 'password' car il est exclu dans le toJSON du modèle
+        const foundUser = await User.findOne({ email: userRequest.email }).select('+password');
 
         // Erreur : 1 - Utilisateur non trouvé
         if (!foundUser) {
             return httpApiResponse(response, "768", "Couple email/mot de passe incorrect", null);
         }
 
-        // 2. Comparer le mot de passe en texte clair (⚠️ INSECURE)
-        const passwordMatch = userRequest.password === foundUser.password;
+        // 2. Comparer le mot de passe reçu avec le HASH stocké
+        const isMatch = await bcrypt.compare(userRequest.password, foundUser.password);
 
-        if (!passwordMatch) {
+        if (!isMatch) {
             return httpApiResponse(response, "768", "Couple email/mot de passe incorrect", null);
         }
 
@@ -83,13 +85,15 @@ router.post("/signup", async (request, response) => {
         }
 
         // Erreur : Les champs inexistant
-        const fields = ['email', 'password', 'pseudo', 'cityCode', 'city', 'phone']
+        // J'ai inclus 'passwordConfirm' ici temporairement pour la vérification, mais il ne sera pas stocké.
+        const fields = ['email', 'password', 'pseudo', 'cityCode', 'city', 'phone', 'username']; // J'ajoute username car il est requis par le modèle
         const fieldSuccess = fields.every(field => userRequest.hasOwnProperty(field));
         if (!fieldSuccess) {
             return httpApiResponse(response, "713", "Il manque un ou des champs requis", null);
         }
 
-        // 2. ❌ Retrait du hachage du mot de passe (stockage en texte clair - ⚠️ INSECURE)
+        // 2. 🎯 HACHAGE du mot de passe
+        const hashedPassword = await bcrypt.hash(userRequest.password, saltRounds);
 
         // 3. Créer le nouvel utilisateur Mongoose
         let newUser = {};
@@ -98,18 +102,16 @@ router.post("/signup", async (request, response) => {
                 newUser[field] = userRequest[field];
             }
         });
-        // Le mot de passe est stocké tel quel
+        // 4. Remplacer le mot de passe en clair par le HASH
+        newUser.password = hashedPassword;
 
-        // 4. Insérer dans la BDD
+        // 5. Insérer dans la BDD
         const userToSave = new User(newUser);
         const savedUser = await userToSave.save();
 
-        // 5. Nettoyer l'objet avant de le retourner
-        // Supprimer le mot de passe de la réponse
-        const responseUser = savedUser.toObject();
-        delete responseUser.password;
-
-        return httpApiResponse(response, "200", "Inscription effectuée avec succès", responseUser);
+        // 6. Nettoyer l'objet avant de le retourner
+        // Grâce au toJSON du modèle, 'password' est déjà exclu.
+        return httpApiResponse(response, "200", "Inscription effectuée avec succès", savedUser);
 
     } catch (error) {
         logger.error("Erreur lors de l'inscription:", error);
@@ -122,6 +124,7 @@ router.post("/reset-password", async (request, response) => {
 
     try {
         // 1. Trouver l'utilisateur par email
+        // Ici, pas besoin de .select('+password') car on ne compare pas
         let foundUser = await User.findOne({ email: userRequest.email });
 
         // 2. Si non trouvé, on renvoie quand même succès pour des raisons de sécurité
@@ -130,14 +133,17 @@ router.post("/reset-password", async (request, response) => {
         }
 
         // 3. Générer le nouveau mot de passe
-        const newPassword = generetePassword(8);
+        const newPasswordClearText = generetePassword(12); // Utiliser une longueur raisonnable (12)
 
-        // 4. Mettre à jour dans la BDD (avec le mot de passe en texte clair - ⚠️ INSECURE)
-        foundUser.password = newPassword;
+        // 4. 🎯 HACHER le nouveau mot de passe
+        const newHashedPassword = await bcrypt.hash(newPasswordClearText, saltRounds);
+
+        // 5. Mettre à jour dans la BDD
+        foundUser.password = newHashedPassword;
         await foundUser.save();
 
-        // 5. Retourner le nouveau mot de passe temporaire
-        return httpApiResponse(response, "200", "Mot de passe réinitialisé avec succès (un e-mail serait envoyé)", newPassword);
+        // 6. Retourner le nouveau mot de passe temporaire (en texte clair pour l'utilisateur)
+        return httpApiResponse(response, "200", "Mot de passe réinitialisé avec succès (un e-mail serait envoyé)", newPasswordClearText);
 
     } catch (error) {
         logger.error("Erreur lors de la réinitialisation du mot de passe:", error);
@@ -195,6 +201,7 @@ router.get("/infos-user", async (request, response) => {
 
     try {
         // 4. Recherche de l'utilisateur dans la BDD
+        // Pas besoin du mot de passe ici, donc pas de .select('+password')
         const foundUser = await User.findOne({ email: userEmailFromToken });
 
         if (!foundUser) {
@@ -202,10 +209,8 @@ router.get("/infos-user", async (request, response) => {
         }
 
         // 5. Préparer les informations à retourner
-        const userInfo = foundUser.toObject();
-        delete userInfo.password; // Supprimer le mot de passe (même s'il est en clair)
-
-        return httpApiResponse(response, "200", "Informations utilisateur récupérées avec succès.", userInfo);
+        // Le .toJSON() du modèle s'applique ici et supprime le mot de passe
+        return httpApiResponse(response, "200", "Informations utilisateur récupérées avec succès.", foundUser);
 
     } catch (error) {
         logger.error("Erreur lors de la récupération des infos utilisateur:", error);
