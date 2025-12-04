@@ -68,7 +68,10 @@ app.use('/messages', messagesRouter);
 const moviesRouter = require('./movies/movie-routes');
 app.use('/movies', moviesRouter);
 
-// Démarrer le serveur avec le port 3000
-app.listen(process.env.PORT, () => {
-    console.log("Le serveur a démarré sur http://localhost:3000");
+const portToUse = process.env.PORT || 3000;
+
+app.listen(portToUse, () => {
+    // 🎯 Modification du log pour inclure le port réel et Render URL
+    console.log(`Le serveur a démarré sur le port ${portToUse}.`);
+    console.log("Accès API sur https://projet-angular-back-24h5.onrender.com");
 });
