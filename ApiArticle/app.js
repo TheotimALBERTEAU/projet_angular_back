@@ -62,11 +62,9 @@ app.use(authRouter);
 const articlesRouter = require('./articles/articles-routes');
 app.use('/articles', articlesRouter);
 
-const messagesRouter = require('./messages/messages-routes');
-app.use('/messages', messagesRouter);
-
-const moviesRouter = require('./movies/movie-routes');
-app.use('/movies', moviesRouter);
+router.get("/healthz", (req, res) => {
+    res.status(200).send({ status: "OK" });
+});
 
 const portToUse = process.env.PORT || 3000;
 
