@@ -226,5 +226,9 @@ router.get("/infos-user", async (request, response) => {
     }
 });
 
+router.get("/healthz", (req, res) => {
+    res.status(200).send({ status: "OK" });
+});
+
 // Exporter le router
 module.exports = router;
